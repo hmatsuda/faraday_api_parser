@@ -1,12 +1,12 @@
 module FaradayApiResponseParser
   class ParseApiResponse < ::Faraday::Response::Middleware
-    def call(env)
-      @app.call(env).on_complete do |env|
-        json = MultiJson.load(env[:body], symbolize_keys: true)
+    def call(request_env)
+      @app.call(request_env).on_complete do |response_env|
+        json = MultiJson.load(response_env[:body], symbolize_keys: true)
 
-        case env[:status]
+        case response_env[:status]
         when 200,201,204
-          env[:body] = {
+          response_env[:body] = {
             data: json,
             errors: [],
             metadata: {}
@@ -20,7 +20,7 @@ module FaradayApiResponseParser
             convert_datetime_attributes(json)
           end
         when 400
-          env[:body] = {
+          response_env[:body] = {
             data: {},
             errors: json[:errors],
             metadata: {}
@@ -34,15 +34,17 @@ module FaradayApiResponseParser
           raise StandardError
         end
       end
+    end
 
-      def convert_datetime_attributes(resource)
+    def convert_datetime_attributes(resource)
       resource.keys.select{|k,v| k =~ /(_date|_at|period)$/}.each do |attribute|
         if resource[attribute].respond_to?(:to_time)
-          resource[attribute] = begin
-            resource[attribute].to_time 
-          rescue ArgumentError => e
-            nil
-          end
+          resource[attribute] = \
+            begin
+              resource[attribute].to_time 
+            rescue ArgumentError => e
+              nil
+            end
         end
       end
     end
