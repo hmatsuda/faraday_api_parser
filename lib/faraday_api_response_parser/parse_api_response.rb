@@ -1,4 +1,9 @@
 module FaradayApiResponseParser
+  class UnauthorizedError < StandardError; end
+  class NotFoundError < StandardError; end
+  class InternalServerError < StandardError; end
+  class ServiceUnavailableError < StandardError; end
+  
   class ParseApiResponse < ::Faraday::Response::Middleware
     def call(request_env)
       @app.call(request_env).on_complete do |response_env|
@@ -26,12 +31,14 @@ module FaradayApiResponseParser
             metadata: {}
           }
         when 401
-          raise StandardError
+          raise FaradayApiResponseParser::UnauthorizedError
         when 403
         when 404
-          raise StandardError
+          raise FaradayApiResponseParser::NotFoundError
         when 500
-          raise StandardError
+          raise FaradayApiResponseParser::InternalError
+        when 500
+          raise FaradayApiResponseParser::ServiceUnavailableError
         end
       end
     end
