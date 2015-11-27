@@ -1,5 +1,6 @@
 module FaradayApiResponseParser
   class UnauthorizedError < StandardError; end
+  class ForbiddenError < StandardError; end
   class NotFoundError < StandardError; end
   class InternalServerError < StandardError; end
   class ServiceUnavailableError < StandardError; end
@@ -33,6 +34,7 @@ module FaradayApiResponseParser
         when 401
           raise FaradayApiResponseParser::UnauthorizedError
         when 403
+          raise FaradayApiResponseParser::ForbiddenError
         when 404
           raise FaradayApiResponseParser::NotFoundError
         when 500
