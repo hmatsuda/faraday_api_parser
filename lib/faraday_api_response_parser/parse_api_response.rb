@@ -15,7 +15,9 @@ module FaradayApiResponseParser
           response_env[:body] = {
             data: json,
             errors: [],
-            metadata: {}
+            metadata: {
+              response_headers: response_env.response_headers,
+            }
           }
           
           if json.class == Array
