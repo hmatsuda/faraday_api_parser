@@ -40,7 +40,7 @@ module FaradayApiResponseParser
         when 404
           raise FaradayApiResponseParser::NotFoundError
         when 500
-          raise FaradayApiResponseParser::InternalError
+          raise FaradayApiResponseParser::InternalServerError
         when 500
           raise FaradayApiResponseParser::ServiceUnavailableError
         end
