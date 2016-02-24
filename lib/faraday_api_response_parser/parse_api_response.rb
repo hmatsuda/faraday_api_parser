@@ -17,6 +17,7 @@ module FaradayApiResponseParser
             errors: [],
             metadata: {
               response_headers: response_env.response_headers,
+              rawdata: json,
             }
           }
           
