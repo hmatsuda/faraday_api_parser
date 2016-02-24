@@ -8,6 +8,7 @@ module FaradayApiResponseParser
   class ParseApiResponse < ::Faraday::Response::Middleware
     def call(request_env)
       @app.call(request_env).on_complete do |response_env|
+        rawdata = response_env[:body]
         json = MultiJson.load(response_env[:body], symbolize_keys: true)
 
         case response_env[:status]
@@ -15,6 +16,7 @@ module FaradayApiResponseParser
           response_env[:body] = {
             data: json,
             errors: [],
+            rawdata: rawdata,
             metadata: {
               response_headers: response_env.response_headers,
             }
